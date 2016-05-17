@@ -1,31 +1,60 @@
 ﻿using UnityEngine;
+using System;
 using System.Collections;
 
-[System.Serializable]
-public class SystemFile
+namespace ObjectAttribute
 {
-    // Number
-    int number;
+    public enum Voltage { None, Positive, Ground };
 
-    public int Number
+    [Serializable]
+    public class SystemFile
     {
-        get { return number; }
-        set { number = value; }
-    }
+        Voltage volt = Voltage.None;
 
-    // Vector
-    float x, y, z;
+        public Voltage Volt
+        {
+            get { return volt; }
+            set { volt = value; }
+        }
 
-    private void Vector3Pos(Vector3 vector3)
-    {
-        x = vector3.x;
-        y = vector3.y;
-        z = vector3.z;
-    }
+        // Number
+        int number;
 
-    public Vector3 Position
-    {
-        get { return new Vector3(x, y, z); }
-        set { Vector3Pos(value); }
+        public int Number
+        {
+            get { return number; }
+            set { number = value; }
+        }
+
+        // Vector arrays
+        float[] x = new float[2];
+        float[] y = new float[2];
+        float[] z = new float[2];
+
+        private void Vector3Pos1(Vector3 vector3)
+        {
+            x[0] = vector3.x;
+            y[0] = vector3.y;
+            z[0] = vector3.z;
+        }
+
+        private void Vector3Pos2(Vector3 vector3)
+        {
+            x[1] = vector3.x;
+            y[1] = vector3.y;
+            z[1] = vector3.z;
+        }
+
+        public Vector3 Position1
+        {
+            get { return new Vector3(x[0], y[0], z[0]); }
+            set { Vector3Pos2(value); }
+        }
+
+        public Vector3 Position2
+        {
+            get { return new Vector3(x[1], y[1], z[1]); }
+            set { Vector3Pos1(value); }
+        }
     }
 }

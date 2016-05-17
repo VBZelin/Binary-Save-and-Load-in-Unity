@@ -3,17 +3,20 @@ using System.Collections;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 using UnityEngine.UI;
+using ObjectAttribute;
 
 public class UI : MonoBehaviour
 {
     // Reference of number
     public int number;
 
+    public Voltage volt;
+
     // Game object
-    GameObject gameObj, input, inputField;
+    GameObject gameObj1, gameObj2, input, inputField;
 
     // Reference of vector3
-    Vector3 position;
+    Vector3 position1, position2;
 
     // Reference of the input text
     string inputText;
@@ -34,11 +37,13 @@ public class UI : MonoBehaviour
     void Awake()
     {
         // get component
-        gameObj = GameObject.Find("Object");
+        gameObj1 = GameObject.Find("Object1");
+        gameObj2 = GameObject.Find("Object2");
         input = GameObject.Find("Input");
         inputField = GameObject.Find("InputField");
 
-        position = gameObj.transform.position;
+        position1 = gameObj1.transform.position;
+        position2 = gameObj2.transform.position;
 
         // buttons
         saveBt = GameObject.Find("saveButton").GetComponent<Button>();
@@ -66,7 +71,8 @@ public class UI : MonoBehaviour
     // Update
     void Update()
     {
-        gameObj.transform.position = position;
+        gameObj1.transform.position = position1;
+        gameObj2.transform.position = position2;
     }
 
     // GUI
@@ -74,6 +80,8 @@ public class UI : MonoBehaviour
     {
         // label
         GUI.Label(new Rect(0, 50, 200, 30), "Number: " + number, guiStyle);
+
+        GUI.Label(new Rect(0, 75, 200, 30), "Voltage: " + volt.ToString(), guiStyle);
 
         // buttons
         if (GUI.Button(new Rect(0, 100, 200, 30), "Plus 100"))
@@ -86,11 +94,13 @@ public class UI : MonoBehaviour
         }
         if (GUI.Button(new Rect(0, 200, 200, 30), "Left"))
         {
-            position.x += 1;
+            position1.x += 1;
+            position2.x += 1;
         }
         if (GUI.Button(new Rect(0, 250, 200, 30), "Right"))
         {
-            position.x -= 1;
+            position1.x -= 1;
+            position2.x -= 1;
         }
     }
 
@@ -129,9 +139,12 @@ public class UI : MonoBehaviour
             // create a file
             BinaryFormatter binaryFormatter = new BinaryFormatter();
             FileStream file = File.Create(Application.persistentDataPath + "/" + inputText + ".dat");
+
             SystemFile systemFile = new SystemFile();
             systemFile.Number = number;
-            systemFile.Position = position;
+            systemFile.Position1 = position1;
+            systemFile.Position2 = position2;
+            systemFile.Volt = Voltage.Positive;
 
             binaryFormatter.Serialize(file, systemFile);
             file.Close();
@@ -150,11 +163,14 @@ public class UI : MonoBehaviour
                 // load a file
                 BinaryFormatter binaryFormatter = new BinaryFormatter();
                 FileStream file = File.Open(Application.persistentDataPath + "/" + inputText + ".dat", FileMode.Open);
+
                 SystemFile systemFile = (SystemFile)binaryFormatter.Deserialize(file);
                 file.Close();
 
                 number = systemFile.Number;
-                position = systemFile.Position;
+                position1 = systemFile.Position1;
+                position2 = systemFile.Position2;
+                volt = systemFile.Volt;
             }
             else
             {
